@@ -296,7 +296,7 @@ const Table = ({
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}
-        className="bg-slate-400 w-full"
+        className="!bg-gray-200 w-full rounded-xl"
         editMode="row"
         onRowEditComplete={onRowEditComplete}
       >
@@ -306,6 +306,7 @@ const Table = ({
               key={field}
               field={field}
               header={header}
+              headerClassName="bg-gray-200 rounded-xl"
               editor={(options) => {
                 return (
                   <InputTextarea
@@ -327,6 +328,7 @@ const Table = ({
           rowEditor
           headerStyle={{ width: '10%', minWidth: '8rem' }}
           bodyStyle={{ textAlign: 'center' }}
+          headerClassName="bg-gray-200 rounded-xl"
         ></Column>
       </DataTable>
     </>
