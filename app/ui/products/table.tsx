@@ -1,13 +1,7 @@
 'use client'
-import {
-  Column,
-  ColumnEditorOptions,
-  ColumnEvent,
-  ColumnProps,
-} from 'primereact/column'
+import { Column, ColumnEvent, ColumnProps } from 'primereact/column'
 import { DataTable, DataTableRowEditCompleteEvent } from 'primereact/datatable'
-import { InputText } from 'primereact/inputtext'
-import React, { useEffect, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { get } from 'lodash'
 import { InputTextarea } from 'primereact/inputtextarea'
 import {
@@ -20,6 +14,8 @@ import { Dropdown } from 'primereact/dropdown'
 import { Dialog } from 'primereact/dialog'
 import { Button } from 'primereact/button'
 import { PrimeIcons } from 'primereact/api'
+import { Toast } from 'primereact/toast'
+import API from '@/app/lib/axios'
 
 const Table = ({
   data,
@@ -30,18 +26,24 @@ const Table = ({
   categoryList: Category[]
   productSettingList: Setting[]
 }) => {
+  const toast = useRef<Toast>(null)
+
   const [products, setProducts] = useState<Product[]>(data)
   const [dataToEdited, setDataToEdited] = useState<Product | undefined>()
 
-  useEffect(() => {
-    console.log('p', products)
-  }, [products])
+  const showError = (message?: string) => {
+    if (toast.current) {
+      toast.current.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: message || 'An Error Occured',
+        life: 3000,
+      })
+    }
+  }
 
-  const updateProducts = async (products: Product[]) => {
-    await fetch('/products/api', {
-      method: 'POST',
-      body: JSON.stringify({ products }),
-    })
+  const updateProducts = (products: Product[]) => {
+    return API.post('/products/api', { products })
   }
 
   const onCellEditComplete = (e: ColumnEvent) => {
@@ -64,7 +66,12 @@ const Table = ({
 
     setProducts(newProducts)
 
-    updateProducts(newProducts)
+    try {
+      await updateProducts(newProducts)
+    } catch (e: any) {
+      showError(e?.message)
+      setProducts(oldProducts)
+    }
   }
 
   const columns: ColumnProps[] = [
@@ -104,12 +111,26 @@ const Table = ({
           : obj
 
         return (
-          <span
-            className="text-blue-500 cursor-pointer hover:underline"
-            onClick={() => setDataToEdited(data)}
-          >
-            <span> {value}</span>
-          </span>
+          <>
+            {value ? (
+              <span
+                className="text-blue-500 cursor-pointer hover:underline"
+                onClick={() => setDataToEdited(data)}
+              >
+                <span>{value}</span>
+              </span>
+            ) : (
+              <span>
+                No data <br />
+                <span
+                  className="text-blue-500 cursor-pointer hover:underline"
+                  onClick={() => setDataToEdited(data)}
+                >
+                  Click to create
+                </span>
+              </span>
+            )}
+          </>
         )
       },
       editor: undefined,
@@ -143,7 +164,7 @@ const Table = ({
     })
   }
 
-  const onSaveSettingList = () => {
+  const onSaveSettingList = async () => {
     if (dataToEdited) {
       const oldProducts = [...products]
 
@@ -154,12 +175,19 @@ const Table = ({
       )
       setProducts(newProducts)
       setDataToEdited(undefined)
-      updateProducts(newProducts)
+
+      try {
+        await updateProducts(newProducts)
+      } catch (e: any) {
+        showError(e?.message)
+        setProducts(oldProducts)
+      }
     }
   }
 
   return (
     <>
+      <Toast ref={toast} />
       {dataToEdited && (
         <Dialog
           id="dlg"
