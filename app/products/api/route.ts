@@ -15,6 +15,7 @@ export async function POST(req: Request) {
     )
     return Response.json({ message: 'Updated' }, { status: 200 })
   } catch (e) {
-    return Response.json({ message: 'An error occured' }, { status: 400 })
+    console.log('e', e)
+    return Response.json({ message: 'An error occured', e }, { status: 400 })
   }
 }
