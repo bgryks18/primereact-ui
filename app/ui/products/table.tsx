@@ -30,6 +30,7 @@ const Table = ({
 
   const [products, setProducts] = useState<Product[]>(data)
   const [dataToEdited, setDataToEdited] = useState<Product | undefined>()
+  const availableSettingItemIds = productSettingList.map((item) => item.Id)
 
   const showError = (message?: string) => {
     if (toast.current) {
@@ -173,7 +174,20 @@ const Table = ({
           ? { ...item, ProductSettings: dataToEdited.ProductSettings }
           : item
       )
-      setProducts(newProducts)
+      setProducts(
+        newProducts.map((item) => {
+          return {
+            ...item,
+            ProductSettings: item.ProductSettings.filter(
+              (settingItem) =>
+                settingItem.SettingId &&
+                settingItem.Value &&
+                availableSettingItemIds.includes(settingItem.SettingId) &&
+                settingItem.Value.trim()
+            ),
+          }
+        })
+      )
       setDataToEdited(undefined)
 
       try {
