@@ -10,14 +10,12 @@ export async function POST(req: Request) {
   try {
     const { products } = newProducts
     await fs.writeFile(
-      process.env.NODE_ENV === 'development'
-        ? process.cwd()
-        : __dirname + '/app/data/product.json',
+      process.cwd() + '/app/data/product.json',
       JSON.stringify(products)
     )
+
     return Response.json({ message: 'Updated' }, { status: 200 })
   } catch (e) {
-    console.log('e', e)
     return Response.json({ message: 'An error occured', e }, { status: 400 })
   }
 }
