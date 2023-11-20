@@ -1,3 +1,14 @@
+# PrimereactUi
+This is a basic web application including crud actions built with nextjs, tailwindcss, primereactui library
+
+## To test in your local
+
+    git clone https://github.com/bgryks18/primereact-ui.git
+    cd primereact-ui
+    yarn build
+    yarn start
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
