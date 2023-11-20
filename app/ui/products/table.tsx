@@ -103,7 +103,7 @@ const Table = ({
     { field: 'Description', header: 'Description' },
     {
       field: 'ProductSettings',
-      header: 'Product Settings',
+      header: 'Product Properties',
       body(data) {
         const obj = get(data, 'ProductSettings')
         const value = Array.isArray(obj)
