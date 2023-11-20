@@ -1,10 +1,6 @@
-import { unstable_noStore as noStore } from 'next/cache'
 import { promises as fs } from 'fs'
 
 export async function fetchProducts() {
-  // Add noStore() here prevent the response from being cached.
-  // This is equivalent to in fetch(..., {cache: 'no-store'}).
-  noStore()
   try {
     const data = await fs.readFile(
       process.cwd() + '/app/data/product.json',
